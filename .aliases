@@ -1,0 +1,154 @@
+alias _="fn() {  }; fn"
+
+# SETUP
+mkdir -p "${HOME}/remotes"
+mkdir -p "${HOME}/remotes/oberon"
+mkdir -p "${HOME}/remotes/data"
+mkdir -p "${HOME}/remotes/deimos"
+mkdir -p "${HOME}/remotes/euvic"
+mkdir -p "${HOME}/remotes/jake-mbp"
+mkdir -p "${HOME}/remotes/judy-mbp"
+
+# VARS
+SSH_USER="jake"
+LOCAL_IP="192.168.21."
+OBERON="${LOCAL_IP}20"
+DEIMOS="${LOCAL_IP}"
+EUVIC="${LOCAL_IP}4"
+MBP="${LOCAL_IP}7"
+REMOTES_DIR="$HOME/remotes"
+
+# TMUX
+alias t='tmux'
+alias ta='tmux attach'
+alias td='tmux detach'
+alias tk='tmux kill-server'
+
+
+
+# SYS TERM
+alias rsh="source ~/.zshrc"
+alias rmv='rm -rf'
+alias rmv-dirs='fn() { find . -name $1 -type d -prune -exec rm -rf '{}' + }; fn'
+alias la='ls -la'
+alias cl='clear'
+alias x='exit'
+alias mkd='fn() { mkdir "$1" && cd "$1"; }; fn'
+alias wi='function _we() { watch -n "$1" "${@:2}"; }; _we'
+alias src='fn() { source ./"$1"/bin/activate }; fn'
+alias lc="fc -l 1 | tac | fzf --tac | xargs -r -I {} /bin/zsh -c '{}'"
+alias ls-cmd='fc -l -n 1 | fzf | xargs -r -I {} /bin/zsh -c "{}"'
+alias fz="fzf --preview 'bat --color=always {}'"
+alias me='echo $(whoami) $(uname -n) $(uname -s) $(my-ip)'
+
+alias et='exa --long --icons -T --git'
+alias ela='exa -a --long --icons --git'
+alias el='exa --long --icons --git'
+alias ea='exa -a --icons'
+alias e='exa --icons'
+
+alias dfh="df -h | grep home | awk '{print \$4}'"
+alias dff='duf -only local'
+
+alias ld='lazydocker'
+alias lg='lazygit'
+
+alias pm='pulsemixer'
+alias bt='bluetui'
+
+alias pps='powerprofilesctl set && notify-send "Power profile set" -i display'
+alias ppg='powerprofilesctl get'
+
+alias rs="redshift -l 50.2649:19.0238 -t 5700:3500"
+alias tt="EDITOR=nvim taskwarrior-tui"
+
+j() { # list / reopen jobs
+  if [ -z "$1" ]; then
+    jobs
+  else
+    eval "fg %$1"
+    # jobs | grep -E "^\[$1\]" || echo "No such job: $1"
+  fi
+}
+
+alias nvr="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia "
+
+# DEVELOPER
+alias edit-hosts='fn() { sudo nvim /etc/hosts && sudo dscacheutil -flashcache}; fn'
+alias cheat='fn() { curl cheat.sh/$1 }; fn'
+alias fnd-comment-py="rg '^\s*#' --glob '*.py'"
+alias fnd-comment="rg '^\s*//|/\*|\*/' --glob '*.{js,ts}'"
+
+# GIT:
+alias gini='git init && git branch -m main'
+alias gst='git status'
+alias gft='git fetch'
+alias gsm='git switch master'
+alias gsn='git switch main'
+alias gsd='git switch develop'
+alias gsb='fn() { git switch "$1" ;}; fn'
+alias gcb='fn() { git checkout -b "$1" ;}; fn'
+alias gca='git checkout .'
+alias gaa='git add .'
+alias gcm='fn() { git commit -m "$1" ;}; fn'
+alias gac='fn() { git add .; git commit -m "$1" ;}; fn'
+alias gct='fn() { git add .; git commit -m "$1" ; git push;}; fn'
+alias gbr='fn() { git branch -D "$1" ;}; fn'
+alias gph='git push'
+alias gpl='git pull'
+alias gmr='fn() { git merge "$1" ;}; fn'
+alias gbl='git branch'
+alias gpub='fn() { git push --set-upstream origin `git rev-parse --abbrev-ref HEAD` }; fn'
+alias glg='git log -r -n 10 --pretty=format:"%h - %an, %ar : %s"'
+alias glg-last-cmt='git log -n 1 --pretty=format:%H'
+alias glg-tree='git log --oneline --decorate --graph -n 20'
+alias glg-tree-detail='git log --graph --pretty='\''%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'\'' -n 20'
+alias gdf-up='git diff @\{upstream\}'
+alias gdf-master='git diff master'
+alias gdf-main='git diff main'
+alias gdf-conf='git diff --name-only --diff-filter=U --relative'
+alias gdf='git diff'
+alias gbr-local='fn() { git branch | grep -v "$1" | xargs git branch -D; }; fn'
+alias grv='fn() { git reset --"$1" HEAD~"$2" }; fn'
+
+# GIT STASH
+alias gsta='fn() { git add .; git stash save "$1"; }; fn'
+alias gstl='git stash list'
+alias gstp='fn() { git stash pop stash@\{"$1"\} }; fn'
+alias gstd='fn() { git stash drop stash@\{"$1"\} }; fn'
+
+# NVIM
+alias nv='nvim'
+alias xv="NVIM_APPNAME=minvim nvim"
+
+# DOCKER
+alias dc-ls='docker ps'
+alias dc-ps='docker ps'
+alias dc-killall='docker kill $(docker ps -q)'
+alias dc-ka='docker kill $(docker ps -q)'
+alias dc-stop='fn() { docker kill $(docker ps -qf expose=$1) }; fn'
+alias dc-st='fn() { docker kill $(docker ps -qf expose=$1) }; fn'
+alias dc-run='fn() { docker run -it -p $1:$1 $2 }; fn'
+alias dc-clean='docker rmi -f $(docker images -a -q)'
+alias dc-img='docker images -a'
+alias dc-sh='fn() { docker exec -it $(docker ps -qf expose=$1) sh }; fn'
+alias dc-up='docker compose up'
+alias dc-down='docker compose down'
+
+
+# REMOTES
+alias sshfs-oberon="sudo sshfs -o allow_other,default_permissions ${USER}@${OBERON}:/home/${USER} ${REMOTES_DIR}/oberon"
+alias sshfs-data="sudo sshfs -o allow_other,default_permissions ${USER}@${OBERON}:/home/${USER}/data ${REMOTES_DIR}/data"
+alias sshfs-deimos="sudo sshfs -o allow_other,default_permissions ${USER}@${DEIMOS}:/home/${USER} ${REMOTES_DIR}/deimos"
+alias sshfs-euvic="sudo sshfs -p 2222 -o allow_other,default_permissions ${USER}@${EUVIC}:/home/${USER} ${REMOTES_DIR}/euvic"
+alias sshfs-mbp-judy="sudo sshfs -o allow_other,default_permissions judy@${MBP}:/Users/judy ${REMOTES_DIR}/judy-mbp"
+
+# netowking
+ssh-port() {
+  local PORT=$1
+  local HOST=$2
+  ssh -N -f -L ${PORT}:localhost:${PORT} ${HOST}
+}
+alias ssh-ports="ps aux | grep '[s]sh -N -f -L'"
+
+alias ls-ports="sudo ss -tulpn | rg LISTEN | rg '127.0.0.1'"
